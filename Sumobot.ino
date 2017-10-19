@@ -1,6 +1,10 @@
 // Define pin numbers.
 #define TRIGGER 9 // The trigger pin for the ultrasonic sensor.
 #define ECHO 10 // The echo pin for the ultrasonic sensor.
+#define LDR_PIN A0 // The analog pin for LDR input,
+
+// Define constants.
+#define SPEED_OF_SOUND 0.03434 // Speed of sound as STP in cm per microsecond.
 
 // Variables for distance tracking.
 long duration;
@@ -12,7 +16,15 @@ void setup() {
 	Serial.begin(9600); // Start the serial communication.
 }
 
-void loop() {
+// Read the LDR sensor.
+void readLDR() {
+	int lightLevel = analogRead(LDR_PIN);
+	Serial.print("LDR: ");
+	Serial.println(lightLevel);
+}
+
+// Read the ultrasonic sensor.
+void readUltrasonic() {
 	// Clear the trigger pin.
 	digitalWrite(TRIGGER, LOW);
 	delayMicroseconds(2);
@@ -25,10 +37,15 @@ void loop() {
 	// Read the echo pin.
 	duration = pulseIn(ECHO, HIGH); // Sound wave travel time in microseconds.
 
-	distance = duration * .03434 / 2.0;
+	distance = duration * SPEED_OF_SOUND / 2.0;
 
 	// Print the distance to the serial monitor.
 	Serial.print("Distance: ");
 	Serial.println(distance);
 	delay(75);
+}
+
+void loop() {
+	readLDR();
+	readUltrasonic();
 }
