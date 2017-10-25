@@ -11,41 +11,41 @@ long duration;
 double distance;
 
 void setup() {
-	pinMode(TRIGGER, OUTPUT); // Set the trigger pin as an output.
-	pinMode(ECHO, INPUT); // Set the echo pin as an input.
-	Serial.begin(9600); // Start the serial communication.
+  pinMode(TRIGGER, OUTPUT); // Set the trigger pin as an output.
+  pinMode(ECHO, INPUT); // Set the echo pin as an input.
+  Serial.begin(9600); // Start the serial communication.
 }
 
 // Read the LDR sensor.
 void readLDR() {
-	int lightLevel = analogRead(LDR_PIN);
-	Serial.print("LDR: ");
-	Serial.println(lightLevel);
+  int lightLevel = analogRead(LDR_PIN);
+  Serial.print("LDR: ");
+  Serial.println(lightLevel);
 }
 
 // Read the ultrasonic sensor.
 void readUltrasonic() {
-	// Clear the trigger pin.
-	digitalWrite(TRIGGER, LOW);
-	delayMicroseconds(2);
+  // Clear the trigger pin.
+  digitalWrite(TRIGGER, LOW);
+  delayMicroseconds(2);
 
-	// Set the trigger pin on HIGH state for 10 micro seconds.
-	digitalWrite(TRIGGER, HIGH);
-	delayMicroseconds(10);
-	digitalWrite(TRIGGER, LOW);
+  // Set the trigger pin on HIGH state for 10 micro seconds.
+  digitalWrite(TRIGGER, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIGGER, LOW);
 
-	// Read the echo pin.
-	duration = pulseIn(ECHO, HIGH); // Sound wave travel time in microseconds.
+  // Read the echo pin.
+  duration = pulseIn(ECHO, HIGH); // Sound wave travel time in microseconds.
 
-	distance = duration * SPEED_OF_SOUND / 2.0;
+  distance = duration * SPEED_OF_SOUND / 2.0;
 
-	// Print the distance to the serial monitor.
-	Serial.print("Distance: ");
-	Serial.println(distance);
-	delay(75);
+  // Print the distance to the serial monitor.
+  Serial.print("Distance: ");
+  Serial.println(distance);
+  delay(75);
 }
 
 void loop() {
-	readLDR();
-	readUltrasonic();
+  readLDR();
+  readUltrasonic();
 }
