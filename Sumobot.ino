@@ -73,19 +73,6 @@ void dance() {
 	digitalWrite(LEFT_BACKWARD, LOW);
 	digitalWrite(RIGHT_FORWARD, HIGH);
 	digitalWrite(RIGHT_BACKWARD, LOW);
-	delay(1000);
-
-	// Turn around.
-	digitalWrite(LEFT_FORWARD, HIGH);
-	digitalWrite(LEFT_BACKWARD, LOW);
-	digitalWrite(RIGHT_FORWARD, LOW);
-	digitalWrite(RIGHT_BACKWARD, HIGH);
-	delay(1000);
-
-	// Disable motors.
-	digitalWrite(LEFT_ENABLE, LOW);
-	digitalWrite(RIGHT_ENABLE, LOW);
-	delay(3000);
 }
 
 void loop() {
