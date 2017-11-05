@@ -62,14 +62,10 @@ void setup() {
 
 // Read the LDR sensor.
 void readLDR() {
-	//frontLeftLight = analogRead(LDR_FRONT_LEFT);
-	//frontRightLight = analogRead(LDR_FRONT_RIGHT);
-	//backLeftLight = analogRead(LDR_BACK_LEFT);
-	//backRightLight = analogRead(LDR_BACK_RIGHT);
-	frontLeftLight = 1000;
-	frontRightLight = 1000;
-	backLeftLight = 1000;
-	backRightLight = 1000;
+	frontLeftLight = analogRead(LDR_FRONT_LEFT);
+	frontRightLight = analogRead(LDR_FRONT_RIGHT);
+	backLeftLight = analogRead(LDR_BACK_LEFT);
+	backRightLight = analogRead(LDR_BACK_RIGHT);
 }
 
 // Read the front ultrasonic sensor.
@@ -183,13 +179,6 @@ void stop() {
 	digitalWrite(RIGHT_ENABLE, LOW);
 }
 
-void dance() {
-	backward();
-	left();
-	right();
-	backward();
-}
-
 // Play the next note in the song.
 void updateMusic() {
 	noTone(SPEAKER_PIN); // Ensure no tone is playing.
@@ -243,12 +232,10 @@ void loop() {
 	readUltrasonic();
 
 	if (!moveAwayFromEdge()) {
-		if (frontDistance <= DISTANCE_THRESHOLD || backDistance <= DISTANCE_THRESHOLD) {
-			if (frontDistance <= backDistance) {
-				forward();
-			} else if (backDistance < frontDistance) {
-				backward();
-			}
+		if (frontDistance <= backDistance) {
+			forward();
+		} else if (backDistance < frontDistance) {
+			backward();
 		} else {
 			right();
 		}
