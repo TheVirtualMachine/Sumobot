@@ -1,8 +1,10 @@
 #include "Music.h"
 
-// Define sensor pin numbers.
-#define TRIGGER 3 // The trigger pin for the ultrasonic sensor.
-#define ECHO 4 // The echo pin for the ultrasonic sensor.
+// Define ultrasonic sensor pin numbers.
+#define FRONT_TRIGGER 11
+#define FRONT_ECHO 12
+#define BACK_TRIGGER 3
+#define BACK_ECHO 4
 
 // Define LDR pins.
 #define LDR_FRONT_LEFT A0
@@ -41,9 +43,11 @@ unsigned long noteEndTime = 0; // The time in milliseconds to stop the current n
 
 // Setup the program.
 void setup() {
-	// Setup the ultrasonic sensor.
-	pinMode(TRIGGER, OUTPUT); // Set the trigger pin as an output.
-	pinMode(ECHO, INPUT); // Set the echo pin as an input.
+	// Setup the ultrasonic sensors.
+	pinMode(FRONT_TRIGGER, OUTPUT); // Set the trigger pin as an output.
+	pinMode(FRONT_ECHO, INPUT); // Set the echo pin as an input.
+	pinMode(BACK_TRIGGER, OUTPUT); // Set the trigger pin as an output.
+	pinMode(BACK_ECHO, INPUT); // Set the echo pin as an input.
 
 	// Setup the motors.
 	pinMode(LEFT_ENABLE, OUTPUT);
@@ -58,31 +62,62 @@ void setup() {
 
 // Read the LDR sensor.
 void readLDR() {
-	frontLeftLight = analogRead(LDR_FRONT_LEFT);
-	frontRightLight = analogRead(LDR_FRONT_RIGHT);
-	backLeftLight = analogRead(LDR_BACK_LEFT);
-	backRightLight = analogRead(LDR_BACK_RIGHT);
+	//frontLeftLight = analogRead(LDR_FRONT_LEFT);
+	//frontRightLight = analogRead(LDR_FRONT_RIGHT);
+	//backLeftLight = analogRead(LDR_BACK_LEFT);
+	//backRightLight = analogRead(LDR_BACK_RIGHT);
+	frontLeftLight = 1000;
+	frontRightLight = 1000;
+	backLeftLight = 1000;
+	backRightLight = 1000;
 }
 
-// Read the ultrasonic sensors.
-void readUltrasonic() {
+// Read the front ultrasonic sensor.
+void readFrontUltrasonic() {
 	// Clear the trigger pin.
-	digitalWrite(TRIGGER, LOW);
+	digitalWrite(FRONT_TRIGGER, LOW);
 	delayMicroseconds(2);
 
 	// Set the trigger pin on HIGH state for 10 micro seconds.
-	digitalWrite(TRIGGER, HIGH);
+	digitalWrite(FRONT_TRIGGER, HIGH);
 	delayMicroseconds(10);
-	digitalWrite(TRIGGER, LOW);
+	digitalWrite(FRONT_TRIGGER, LOW);
 
 	// Read the echo pin.
-	long duration = pulseIn(ECHO, HIGH); // Sound wave travel time in microseconds.
+	long duration = pulseIn(FRONT_ECHO, HIGH); // Sound wave travel time in microseconds.
 
 	frontDistance = duration * SPEED_OF_SOUND / 2.0;
 
 	// Print the distance to the serial monitor.
 	Serial.print("Front distance: ");
 	Serial.println(frontDistance);
+}
+
+// Read the back ultrasonic sensor.
+void readBackUltrasonic() {
+	// Clear the trigger pin.
+	digitalWrite(BACK_TRIGGER, LOW);
+	delayMicroseconds(2);
+
+	// Set the trigger pin on HIGH state for 10 micro seconds.
+	digitalWrite(BACK_TRIGGER, HIGH);
+	delayMicroseconds(10);
+	digitalWrite(BACK_TRIGGER, LOW);
+
+	// Read the echo pin.
+	long duration = pulseIn(BACK_ECHO, HIGH); // Sound wave travel time in microseconds.
+
+	backDistance = duration * SPEED_OF_SOUND / 2.0;
+
+	// Print the distance to the serial monitor.
+	Serial.print("Back distance: ");
+	Serial.println(backDistance);
+}
+
+// Read the ultrasonic sensors.
+void readUltrasonic() {
+	readFrontUltrasonic();
+	readBackUltrasonic();
 }
 
 void forward() {
@@ -222,4 +257,5 @@ void loop() {
 	if (millis() >= noteEndTime) {
 		updateMusic();
 	}
+	delay(500);
 }
