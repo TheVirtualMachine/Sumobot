@@ -13,12 +13,12 @@
 #define LDR_BACK_RIGHT A3
 
 // Define motor pin numbers.
-#define LEFT_ENABLE 5 // The pin to turn the left motor on and off.
-#define LEFT_FORWARD 6 // The pin to move the left motor forwards.
-#define LEFT_BACKWARD 7 // The pin to move the left motor forwards.
-#define RIGHT_ENABLE 8 // The pin to turn the left motor on and off.
-#define RIGHT_FORWARD 9 // The pin to move the left motor forwards.
-#define RIGHT_BACKWARD 10 // The pin to move the left motor forwards.
+#define LEFT_ENABLE 8 // The pin to turn the left motor on and off.
+#define LEFT_FORWARD 9 // The pin to move the left motor forwards.
+#define LEFT_BACKWARD 10 // The pin to move the left motor forwards.
+#define RIGHT_ENABLE 5 // The pin to turn the left motor on and off.
+#define RIGHT_FORWARD 6 // The pin to move the left motor forwards.
+#define RIGHT_BACKWARD 7 // The pin to move the left motor forwards.
 
 // Define constants.
 #define SPEED_OF_SOUND 0.03434 // Speed of sound as STP in cm per microsecond.
@@ -187,7 +187,7 @@ void updateMusic() {
 		currentNote = 0;
 	}
 
-	int noteDuration = noteDurations[currentNote] * min(frontDistance * 2, 100);
+	int noteDuration = noteDurations[currentNote] * min(min(frontDistance,backDistance) * 4, 100);
 	if (melody[currentNote] == NOTE_REST) { // If this note is a rest, don't play anything.
 		noteEndTime = millis() + noteDuration * 1.30; // Set the time for when to play the next note to noteDuration + 30%.
 	} else {
@@ -228,6 +228,8 @@ bool moveAwayFromEdge() {
 }
 
 void loop() {
+	left();
+	return;
 	readLDR();
 	readUltrasonic();
 
