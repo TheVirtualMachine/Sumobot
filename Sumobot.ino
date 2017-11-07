@@ -13,10 +13,8 @@
 #define LDR_BACK_RIGHT A3
 
 // Define motor pin numbers.
-#define LEFT_ENABLE 8 // The pin to turn the left motor on and off.
 #define LEFT_FORWARD 9 // The pin to move the left motor forwards.
 #define LEFT_BACKWARD 10 // The pin to move the left motor forwards.
-#define RIGHT_ENABLE 5 // The pin to turn the left motor on and off.
 #define RIGHT_FORWARD 6 // The pin to move the left motor forwards.
 #define RIGHT_BACKWARD 7 // The pin to move the left motor forwards.
 
@@ -50,10 +48,8 @@ void setup() {
 	pinMode(BACK_ECHO, INPUT); // Set the echo pin as an input.
 
 	// Setup the motors.
-	pinMode(LEFT_ENABLE, OUTPUT);
 	pinMode(LEFT_FORWARD, OUTPUT);
 	pinMode(LEFT_BACKWARD, OUTPUT);
-	pinMode(RIGHT_ENABLE, OUTPUT);
 	pinMode(RIGHT_FORWARD, OUTPUT);
 	pinMode(RIGHT_BACKWARD, OUTPUT);
 
@@ -119,10 +115,6 @@ void readUltrasonic() {
 void forward() {
 	Serial.println("Forward");
 
-	// Enable motors.
-	digitalWrite(LEFT_ENABLE, HIGH);
-	digitalWrite(RIGHT_ENABLE, HIGH);
-
 	// Move forward.
 	digitalWrite(LEFT_FORWARD, HIGH);
 	digitalWrite(LEFT_BACKWARD, LOW);
@@ -132,10 +124,6 @@ void forward() {
 
 void left() {
 	Serial.println("Left");
-
-	// Enable motors.
-	digitalWrite(LEFT_ENABLE, HIGH);
-	digitalWrite(RIGHT_ENABLE, HIGH);
 
 	// Move left.
 	digitalWrite(LEFT_FORWARD, LOW);
@@ -147,10 +135,6 @@ void left() {
 void right() {
 	Serial.println("Right");
 
-	// Enable motors.
-	digitalWrite(LEFT_ENABLE, HIGH);
-	digitalWrite(RIGHT_ENABLE, HIGH);
-
 	// Move right.
 	digitalWrite(LEFT_FORWARD, HIGH);
 	digitalWrite(LEFT_BACKWARD, LOW);
@@ -160,10 +144,6 @@ void right() {
 
 void backward() {
 	Serial.println("Backward");
-
-	// Enable motors.
-	digitalWrite(LEFT_ENABLE, HIGH);
-	digitalWrite(RIGHT_ENABLE, HIGH);
 
 	// Move forward.
 	digitalWrite(LEFT_FORWARD, LOW);
@@ -175,8 +155,11 @@ void backward() {
 void stop() {
 	Serial.println("Stop");
 
-	digitalWrite(LEFT_ENABLE, LOW);
-	digitalWrite(RIGHT_ENABLE, LOW);
+	digitalWrite(LEFT_FORWARD, LOW);
+	digitalWrite(LEFT_BACKWARD, LOW);
+
+	digitalWrite(RIGHT_FORWARD, LOW);
+	digitalWrite(RIGHT_BACKWARD, LOW);
 }
 
 // Play the next note in the song.
@@ -228,12 +211,10 @@ bool moveAwayFromEdge() {
 }
 
 void loop() {
-	left();
-	return;
 	readLDR();
 	readUltrasonic();
 
-	if (!moveAwayFromEdge()) {
+	if (true || !moveAwayFromEdge()) {
 		if (frontDistance <= backDistance) {
 			forward();
 		} else if (backDistance < frontDistance) {
@@ -246,5 +227,4 @@ void loop() {
 	if (millis() >= noteEndTime) {
 		updateMusic();
 	}
-	delay(500);
 }
