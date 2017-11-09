@@ -37,7 +37,7 @@ void setup() {
 	pinMode(FRONT_TRIGGER, OUTPUT); // Set the trigger pin as an output.
 	pinMode(FRONT_ECHO, INPUT); // Set the echo pin as an input.
 	pinMode(BACK_TRIGGER, OUTPUT); // Set the trigger pin as an output.
-	pinMode(BACK_ECHO, INPUT); // Set the echo pin as an input.
+	pnMode(BACK_ECHO, INPUT); // Set the echo pin as an input.
 
 	// Setup the motors.
 	pinMode(LEFT_FORWARD, OUTPUT);
@@ -46,8 +46,6 @@ void setup() {
 	pinMode(RIGHT_BACKWARD, OUTPUT);
 
 	Serial.begin(9600); // Start the serial communication.
-
-	charge();
 }
 
 
