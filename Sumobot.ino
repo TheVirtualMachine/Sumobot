@@ -1,3 +1,9 @@
+/********************************************
+* Vincent Macri, David White, Rian Waterson *
+* Mr. Wong                                  *
+* 2017-11-09                                *
+* Sumobot program.                          *
+*********************************************/
 // Define ultrasonic sensor pin numbers.
 #define FRONT_TRIGGER 12
 #define FRONT_ECHO 13
@@ -37,7 +43,7 @@ void setup() {
 	pinMode(FRONT_TRIGGER, OUTPUT); // Set the trigger pin as an output.
 	pinMode(FRONT_ECHO, INPUT); // Set the echo pin as an input.
 	pinMode(BACK_TRIGGER, OUTPUT); // Set the trigger pin as an output.
-	pnMode(BACK_ECHO, INPUT); // Set the echo pin as an input.
+	pinMode(BACK_ECHO, INPUT); // Set the echo pin as an input.
 
 	// Setup the motors.
 	pinMode(LEFT_FORWARD, OUTPUT);
@@ -46,17 +52,6 @@ void setup() {
 	pinMode(RIGHT_BACKWARD, OUTPUT);
 
 	Serial.begin(9600); // Start the serial communication.
-}
-
-
-// Charge until an edge is reached.
-void charge() {
-	readLDR();
-	while (!areLDRsTriggered()) {
-		forward();
-		readLDR();
-	}
-	backward();
 }
 
 // Read the LDR sensor.
@@ -201,6 +196,17 @@ bool moveAwayFromEdge() {
 void loop() {
 	readLDR();
 	readUltrasonic();
+	Serial.println(frontLeftLight);
+	Serial.print(" ");
+	return;
+
+	Serial.print(frontLeftLight);
+	Serial.print(" ");
+	Serial.print(frontRightLight);
+	Serial.print(" ");
+	Serial.print(backLeftLight);
+	Serial.print(" ");
+	Serial.println(backRightLight);
 
 	if (!moveAwayFromEdge()) {
 		if (frontDistance <= DISTANCE_THRESHOLD && frontDistance <= backDistance) {
