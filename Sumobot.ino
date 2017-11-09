@@ -1,8 +1,6 @@
-#include "Music.h"
-
 // Define ultrasonic sensor pin numbers.
-#define FRONT_TRIGGER 11
-#define FRONT_ECHO 12
+#define FRONT_TRIGGER 12
+#define FRONT_ECHO 13
 #define BACK_TRIGGER 3
 #define BACK_ECHO 4
 
@@ -30,14 +28,8 @@ int frontLeftLight, frontRightLight, backLeftLight, backRightLight;
 double frontDistance, backDistance;
 
 // Define thresholds.
-#define DISTANCE_THRESHOLD 100
-#define LDR_THRESHOLD 300
-
-// Information for playing notes.
-unsigned int currentNote = 0; // The index of current note being played in the arrays.
-unsigned long noteEndTime = 0; // The time in milliseconds to stop the current note.
-
-#define SPEAKER_PIN 13 // Pin for the speaker.
+#define DISTANCE_THRESHOLD 50
+#define LDR_THRESHOLD 550
 
 // Setup the program.
 void setup() {
@@ -54,6 +46,19 @@ void setup() {
 	pinMode(RIGHT_BACKWARD, OUTPUT);
 
 	Serial.begin(9600); // Start the serial communication.
+
+	charge();
+}
+
+
+// Charge until an edge is reached.
+void charge() {
+	readLDR();
+	while (!areLDRsTriggered()) {
+		forward();
+		readLDR();
+	}
+	backward();
 }
 
 // Read the LDR sensor.
@@ -79,10 +84,6 @@ void readFrontUltrasonic() {
 	long duration = pulseIn(FRONT_ECHO, HIGH); // Sound wave travel time in microseconds.
 
 	frontDistance = duration * SPEED_OF_SOUND / 2.0;
-
-	// Print the distance to the serial monitor.
-	Serial.print("Front distance: ");
-	Serial.println(frontDistance);
 }
 
 // Read the back ultrasonic sensor.
@@ -100,10 +101,6 @@ void readBackUltrasonic() {
 	long duration = pulseIn(BACK_ECHO, HIGH); // Sound wave travel time in microseconds.
 
 	backDistance = duration * SPEED_OF_SOUND / 2.0;
-
-	// Print the distance to the serial monitor.
-	Serial.print("Back distance: ");
-	Serial.println(backDistance);
 }
 
 // Read the ultrasonic sensors.
@@ -162,27 +159,14 @@ void stop() {
 	digitalWrite(RIGHT_BACKWARD, LOW);
 }
 
-// Play the next note in the song.
-void updateMusic() {
-	noTone(SPEAKER_PIN); // Ensure no tone is playing.
-
-	if (currentNote >= (sizeof(melody) / sizeof(int))) { // If we have reached the end of the song.
-		currentNote = 0;
-	}
-
-	int noteDuration = noteDurations[currentNote] * min(min(frontDistance,backDistance) * 4, 100);
-	if (melody[currentNote] == NOTE_REST) { // If this note is a rest, don't play anything.
-		noteEndTime = millis() + noteDuration * 1.30; // Set the time for when to play the next note to noteDuration + 30%.
-	} else {
-		tone(SPEAKER_PIN, melody[currentNote], noteDuration);
-		noteEndTime = millis() + noteDuration * 1.30; // Set the time for when to play the next note to noteDuration + 30%.
-	}
-	currentNote++;
-}
-
 // Check if a given LDR reading should trigger a reaction.
 bool isLDRTriggered(int level) {
 	return (level <= LDR_THRESHOLD);
+}
+
+// Check if any of the LDRs are triggered.
+bool areLDRsTriggered() {
+	return (isLDRTriggered(frontLeftLight) || isLDRTriggered(frontRightLight) || isLDRTriggered(backLeftLight) || isLDRTriggered(backRightLight));
 }
 
 // Move away from the edge.
@@ -193,6 +177,12 @@ bool moveAwayFromEdge() {
 		return true;
 	} else if (isLDRTriggered(backLeftLight) && isLDRTriggered(backRightLight)) {
 		forward();
+		return true;
+	} else if (isLDRTriggered(frontLeftLight) && isLDRTriggered(backLeftLight)) {
+		right();
+		return true;
+	} else if (isLDRTriggered(frontRightLight) && isLDRTriggered(backRightLight)) {
+		left();
 		return true;
 	} else if (isLDRTriggered(frontLeftLight)) {
 		right();
@@ -214,17 +204,13 @@ void loop() {
 	readLDR();
 	readUltrasonic();
 
-	if (true || !moveAwayFromEdge()) {
-		if (frontDistance <= backDistance) {
+	if (!moveAwayFromEdge()) {
+		if (frontDistance <= DISTANCE_THRESHOLD && frontDistance <= backDistance) {
 			forward();
-		} else if (backDistance < frontDistance) {
+		} else if (backDistance <= DISTANCE_THRESHOLD && backDistance < frontDistance) {
 			backward();
 		} else {
 			right();
 		}
-	}
-
-	if (millis() >= noteEndTime) {
-		updateMusic();
 	}
 }
