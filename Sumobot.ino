@@ -196,17 +196,6 @@ bool moveAwayFromEdge() {
 void loop() {
 	readLDR();
 	readUltrasonic();
-	Serial.println(frontLeftLight);
-	Serial.print(" ");
-	return;
-
-	Serial.print(frontLeftLight);
-	Serial.print(" ");
-	Serial.print(frontRightLight);
-	Serial.print(" ");
-	Serial.print(backLeftLight);
-	Serial.print(" ");
-	Serial.println(backRightLight);
 
 	if (!moveAwayFromEdge()) {
 		if (frontDistance <= DISTANCE_THRESHOLD && frontDistance <= backDistance) {
